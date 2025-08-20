@@ -51,7 +51,7 @@ class DirectiveUpdater:
             for i, url in enumerate(urls_to_collect):
                 self.logger.info(f"[{i+1}/{len(urls_to_collect)}] {url} 수집 시작")
                 try:
-                    info = self.scraper.safe_extract_details(url, 0, i+1, len(urls_to_collect))
+                    info = self.scraper.safe_extract(self.scraper.extract_details, url, 0, i+1, len(urls_to_collect))
                     if info:
                         self.scraper.info_results.append(info)
                         self.logger.info(f"[{i+1}/{len(urls_to_collect)}] 세부정보 처리 완료 : {url}")

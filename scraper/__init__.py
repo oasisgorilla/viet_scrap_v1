@@ -1,6 +1,9 @@
 # scraper/__init__.py
-from typing import Literal
+from typing import Literal, TYPE_CHECKING
 from log_util import setup_logger
+
+if TYPE_CHECKING:
+    from scraper.law_scraper import LawScraper
 
 def make_law_scraper(mode: Literal["central", "local"], **kwargs) -> "LawScraper":
     """법령 스크래퍼 팩토리 함수"""

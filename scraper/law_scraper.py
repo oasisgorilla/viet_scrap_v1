@@ -264,7 +264,7 @@ class LawScraper(BaseScraper):
         self.merge_excel("info", ['itemID'])
         
         self.logger.info("relations 병합 시작")
-        self.merge_excel("relation", [])
+        self.merge_excel("relation", ['regionID', 'itemID', 'relation_itemID', '관계유형'])
         
         self.logger.info("download_links 병합 시작")
         self.merge_excel("download_link", ['itemID', '다운로드 링크'])

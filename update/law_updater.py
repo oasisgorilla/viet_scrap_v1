@@ -197,7 +197,7 @@ class LawUpdater:
             
             # 병합
             self.logger.info("relations 병합 시작")
-            self.scraper.merge_excel("relation", [])
+            self.scraper.merge_excel("relation", ['regionID', 'itemID', 'relation_itemID', '관계유형'])
         else:
             self.logger.error("업데이트할 관계정보 데이터 없음")
 
@@ -214,29 +214,31 @@ class LawUpdater:
         else:
             self.logger.error("업데이트할 다운로드 링크 데이터 없음")
 
+        self.scraper._add_primary_keys()
+
         # 관계정보, 다운로드 링크 테이블에 일련번호 추가
-            def add_primary_key_column(file_path, pk_name="id"):
-                df = pd.read_excel(file_path)
+        # def add_primary_key_column(file_path, pk_name="id"):
+        #     df = pd.read_excel(file_path)
 
-                # 기존 pk 컬럼 제거
-                if pk_name in df.columns:
-                    df = df.drop(columns=[pk_name])
+        #     # 기존 pk 컬럼 제거
+        #     if pk_name in df.columns:
+        #         df = df.drop(columns=[pk_name])
 
-                # 1..N 일련번호 부여
-                df.insert(0, pk_name, range(1, len(df) + 1))
+        #     # 1..N 일련번호 부여
+        #     df.insert(0, pk_name, range(1, len(df) + 1))
 
-                # 저장
-                df.to_excel(file_path, index=False)
+        #     # 저장
+        #     df.to_excel(file_path, index=False)
 
-            # 병합 후 일련번호 추가
-            merged_relation_path = Path(self.scraper.output_dir) / "relation" / "merged_result.xlsx"
-            merged_download_path = Path(self.scraper.output_dir) / "download_link" / "merged_result.xlsx"
+        # # 병합 후 일련번호 추가
+        # merged_relation_path = Path(self.scraper.output_dir) / "relation" / "merged_result.xlsx"
+        # merged_download_path = Path(self.scraper.output_dir) / "download_link" / "merged_result.xlsx"
 
-            if merged_relation_path.exists():
-                add_primary_key_column(merged_relation_path)
+        # if merged_relation_path.exists():
+        #     add_primary_key_column(merged_relation_path)
 
-            if merged_download_path.exists():
-                add_primary_key_column(merged_download_path)
+        # if merged_download_path.exists():
+        #     add_primary_key_column(merged_download_path)
 
         # 실패 URL 저장
         if self.scraper.failed_urls:

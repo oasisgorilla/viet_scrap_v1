@@ -171,12 +171,11 @@ class LawUpdater:
 
     def _save_update_results(self, urls_to_collect):
         """업데이트 결과 저장"""
-        timestamp = datetime.now().strftime("%Y%m%d%H%M")
         
         # 기본정보 저장
         if self.scraper.info_results:
             df_info = pd.DataFrame(self.scraper.info_results)
-            updated_file = Path(self.scraper.output_dir) / "info" / f"updated_result_{timestamp}.xlsx"
+            updated_file = Path(self.scraper.output_dir) / "info" / f"updated_result.xlsx"
             df_info.to_excel(updated_file, index=False)
             
             success_rate = len(self.scraper.info_results) / len(urls_to_collect) * 100
@@ -192,7 +191,7 @@ class LawUpdater:
         # 관계정보 저장
         if self.scraper.relations_results:
             df_relation = pd.DataFrame(self.scraper.relations_results)
-            updated_file = Path(self.scraper.output_dir) / "relation" / f"updated_result_{timestamp}.xlsx"
+            updated_file = Path(self.scraper.output_dir) / "relation" / f"updated_result.xlsx"
             df_relation.to_excel(updated_file, index=False)
             self.logger.info(f"새로운 관계정보 {len(df_relation)}건 저장 완료: {updated_file}")
             
@@ -205,7 +204,7 @@ class LawUpdater:
         # 다운로드 링크 저장
         if self.scraper.download_link_results:
             df_download_link = pd.DataFrame(self.scraper.download_link_results)
-            updated_file = Path(self.scraper.output_dir) / "download_link" / f"updated_result_{timestamp}.xlsx"
+            updated_file = Path(self.scraper.output_dir) / "download_link" / f"updated_result.xlsx"
             df_download_link.to_excel(updated_file, index=False)
             self.logger.info(f"새로운 다운로드링크 {len(df_download_link)}건 저장 완료: {updated_file}")
             
@@ -214,6 +213,30 @@ class LawUpdater:
             self.scraper.merge_excel("download_link", ['itemID', '다운로드 링크'])
         else:
             self.logger.error("업데이트할 다운로드 링크 데이터 없음")
+
+        # 관계정보, 다운로드 링크 테이블에 일련번호 추가
+            def add_primary_key_column(file_path, pk_name="id"):
+                df = pd.read_excel(file_path)
+
+                # 기존 pk 컬럼 제거
+                if pk_name in df.columns:
+                    df = df.drop(columns=[pk_name])
+
+                # 1..N 일련번호 부여
+                df.insert(0, pk_name, range(1, len(df) + 1))
+
+                # 저장
+                df.to_excel(file_path, index=False)
+
+            # 병합 후 일련번호 추가
+            merged_relation_path = Path(self.scraper.output_dir) / "relation" / "merged_result.xlsx"
+            merged_download_path = Path(self.scraper.output_dir) / "download_link" / "merged_result.xlsx"
+
+            if merged_relation_path.exists():
+                add_primary_key_column(merged_relation_path)
+
+            if merged_download_path.exists():
+                add_primary_key_column(merged_download_path)
 
         # 실패 URL 저장
         if self.scraper.failed_urls:

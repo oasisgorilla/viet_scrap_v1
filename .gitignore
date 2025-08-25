@@ -9,11 +9,7 @@ venv/
 .log
 
 # 산출물
-central_law/
-local_law/
-directive/
-law_combined/
-test_local_law/
+output/
 /*log
 
 # 캐시

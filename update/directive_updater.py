@@ -12,7 +12,7 @@ from datetime import datetime
 class DirectiveUpdater:
     def __init__(self, scraper:DirectiveScraper):
         self.scraper = scraper
-        self.logger = setup_logger(__name__, f"directive/log/directive_updater.log")
+        self.logger = setup_logger(__name__, f"output/directive/log/directive_updater.log")
     def run(self):
         self.scraper.driver.delete_all_cookies()
         # ---------- 수집된 행정지시문서 url 목록 로드 ----------

@@ -9,7 +9,7 @@ def make_law_scraper(mode: Literal["central", "local"], **kwargs) -> "LawScraper
     # 모드별 로거 설정
     logger = setup_logger(
         f"{mode}_law_scraper", 
-        f"{mode}_law/log/{mode}_law_scrapper.log"
+        f"output/{mode}_law/log/{mode}_law_scrapper.log"
     )
     
     # 옵션 추출

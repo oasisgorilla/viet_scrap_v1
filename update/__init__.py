@@ -9,7 +9,7 @@ def make_law_updater(mode: Literal["central", "local"], scraper, **kwargs) -> "L
     # 모드별 로거 설정
     logger = setup_logger(
         f"{mode}_law_updater", 
-        f"{mode}_law/log/{mode}_law_updater.log"
+        f"output/{mode}_law/log/{mode}_law_updater.log"
     )
     
     return LawUpdater(mode=mode, scraper=scraper, logger=logger)

@@ -6,13 +6,13 @@ from typing import Iterable, List, Optional, Tuple, Dict, Any
 # 프로젝트 로거 사용 (없어도 동작하도록 예외 처리)
 try:
     from log_util import setup_logger
-    LOGGER = setup_logger(__name__, "law_combined/log/merge_law_tables.log")
+    LOGGER = setup_logger(__name__, "output/law_combined/log/merge_law_tables.log")
 except Exception:
     import logging
     logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
     LOGGER = logging.getLogger(__name__)
 
-OUT_BASE = Path("law_combined")
+OUT_BASE = Path("output/law_combined")
 
 # -------- 공통 유틸 --------
 def ensure_dir(p: Path) -> Path:
@@ -68,8 +68,8 @@ def merge_info() -> Optional[Path]:
     중복 키: regionID + itemID
     """
     srcs = [
-        Path("central_law/info/merged_result.xlsx"),
-        Path("local_law/info/merged_result.xlsx"),
+        Path("output/central_law/info/merged_result.xlsx"),
+        Path("output/local_law/info/merged_result.xlsx"),
     ]
     dfs = [read_if_exists(p) for p in srcs]
     df = concat_and_drop_duplicates(dfs, subset=["regionID", "itemID"])
@@ -92,8 +92,8 @@ def merge_relation() -> Optional[Path]:
     중복 제거 없이 단순 병합
     """
     srcs = [
-        Path("central_law/relation/merged_result.xlsx"),
-        Path("local_law/relation/merged_result.xlsx"),
+        Path("output/central_law/relation/merged_result.xlsx"),
+        Path("output/local_law/relation/merged_result.xlsx"),
     ]
     dfs = [read_if_exists(p) for p in srcs]
     df = pd.concat([d for d in dfs if not d.empty], ignore_index=True) # 중복체크 하지 않음
@@ -119,8 +119,8 @@ def merge_download_link() -> Optional[Path]:
     중복 키: regionID, itemID, 다운로드 링크
     """
     srcs = [
-        Path("central_law/download_link/merged_result.xlsx"),
-        Path("local_law/download_link/merged_result.xlsx"),
+        Path("output/central_law/download_link/merged_result.xlsx"),
+        Path("output/local_law/download_link/merged_result.xlsx"),
     ]
     dfs = [read_if_exists(p) for p in srcs]
 
@@ -146,7 +146,7 @@ def copy_directive() -> Optional[Path]:
     """
     행정지시문서 기본정보를 이름만 바꿔 최종 위치로 복사 저장
     """
-    src = Path("directive/info/merged_result.xlsx")
+    src = Path("output/directive/info/merged_result.xlsx")
     df = read_if_exists(src)
     if df.empty:
         LOGGER.warning("[directive] 입력 데이터가 비었습니다.")

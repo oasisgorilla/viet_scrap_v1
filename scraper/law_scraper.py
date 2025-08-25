@@ -23,7 +23,7 @@ class LawScraper(BaseScraper):
         # 모드별 설정
         base_url = "https://vbpl.vn"
         start_url = f"{base_url}/TW/Pages/home.aspx"
-        output_dir = f"{mode}_law"
+        output_dir = f"output/{mode}_law"
         wait_time = 10
         docs_per_page = 30
         

@@ -16,7 +16,7 @@ from math import ceil
 # ----------- 전역 설정값 ------------
 BASE_URL = "https://chinhphu.vn"
 START_URL = f"{BASE_URL}/he-thong-van-ban?classid=2&mode=1"
-OUTPUT_DIR = "directive"
+OUTPUT_DIR = "output/directive"
 WAIT_TIME = 10
 DOCS_PER_PAGE = 50
 PAGE_CHUNK_SIZE = 10

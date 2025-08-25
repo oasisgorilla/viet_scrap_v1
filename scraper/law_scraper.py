@@ -231,9 +231,9 @@ class LawScraper(BaseScraper):
             prefix = ""
             
         filenames = {
-            "info": f"{prefix}info_output_{start_page:03d}_{end_page:03d}.xlsx",
-            "relation": f"{prefix}relations_output_{start_page:03d}_{end_page:03d}.xlsx",
-            "download_link": f"{prefix}download_link_output_{start_page:03d}_{end_page:03d}.xlsx"
+            "info": f"{prefix}info_output_{start_page:03d}_{end_page:03d}.csv",
+            "relation": f"{prefix}relations_output_{start_page:03d}_{end_page:03d}.csv",
+            "download_link": f"{prefix}download_link_output_{start_page:03d}_{end_page:03d}.csv"
         }
 
         # 저장
@@ -247,7 +247,7 @@ class LawScraper(BaseScraper):
             if data:
                 df = pd.DataFrame(data)
                 file_path = output_dirs[key] / filenames[key]
-                df.to_excel(file_path, index=False)
+                df.to_csv(file_path, index=False, encoding='utf-8')
                 self.logger.info(f"저장됨: {file_path}")
             else:
                 self.logger.error(f"저장할 데이터 없음: {filenames[key]}")
@@ -281,14 +281,14 @@ class LawScraper(BaseScraper):
             if not file_path.exists():
                 return
                 
-            df = pd.read_excel(file_path)
+            df = pd.read_csv(file_path)
             if pk_name in df.columns:
                 df = df.drop(columns=[pk_name])
             df.insert(0, pk_name, range(1, len(df) + 1))
-            df.to_excel(file_path, index=False)
+            df.to_csv(file_path, index=False, encoding='utf-8')
 
-        merged_relation_path = Path(self.output_dir) / "relation" / "merged_result.xlsx"
-        merged_download_path = Path(self.output_dir) / "download_link" / "merged_result.xlsx"
+        merged_relation_path = Path(self.output_dir) / "relation" / "merged_result.csv"
+        merged_download_path = Path(self.output_dir) / "download_link" / "merged_result.csv"
 
         add_pk(merged_relation_path)
         add_pk(merged_download_path)

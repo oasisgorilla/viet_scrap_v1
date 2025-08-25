@@ -56,8 +56,8 @@ class BaseScraper:
     def merge_excel(self, subfolder: str, subset_keys: list[str]):
         """엑셀 파일 병합 - 법령용 정보량 점수 로직 포함"""
         input_dir = Path(self.output_dir) / subfolder
-        files = [f for f in input_dir.glob("*.xlsx")
-                if f.name not in {"merged_result.xlsx", "updated_result.xlsx"}]
+        files = [f for f in input_dir.glob("*.csv")
+                if f.name not in {"merged_result.csv", "updated_result.csv"}]
         if not files:
             self.logger.info(f"[merge_excel] 대상 파일 없음: {input_dir}")
             return
@@ -66,7 +66,7 @@ class BaseScraper:
         for f in files:
             try:
                 if f.stat().st_size > 0:
-                    dfs.append(pd.read_excel(f))
+                    dfs.append(pd.read_csv(f))
             except Exception as e:
                 self.logger.warning(f"[merge_excel] 읽기 실패: {f} | {e}")
         if not dfs:
@@ -142,8 +142,8 @@ class BaseScraper:
                                             if c in combined.columns])
 
         # 저장
-        out_path = input_dir / "merged_result.xlsx"
-        combined.to_excel(out_path, index=False)
+        out_path = input_dir / "merged_result.csv"
+        combined.to_csv(out_path, index=False, encoding='utf-8')
         self.logger.info(f"[merge_excel] 저장 완료: {out_path} (rows={len(combined)})")
 
     def safe_go_to(self, func, *args, retries=4, delay=60):

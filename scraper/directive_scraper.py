@@ -73,7 +73,7 @@ class DirectiveScraper(BaseScraper):
                 # chunk size마다 중간저장
                 if current_page_number % PAGE_CHUNK_SIZE == 0 or current_page_number == total_page_number:
                     end_page = current_page_number
-                    file_name = f"directive_info_output_{start_page:03d}_{end_page:03d}.xlsx"
+                    file_name = f"directive_info_output_{start_page:03d}_{end_page:03d}.csv"
                     file_path = os.path.join(output_dir, file_name)
 
                     # 누적
@@ -82,7 +82,7 @@ class DirectiveScraper(BaseScraper):
                     # 엑셀로 저장
                     if self.info_results:
                         df1 = pd.DataFrame(self.info_results)
-                        df1.to_excel(file_path, index=False)
+                        df1.to_csv(file_path, index=False, encoding='utf-8')
                         self.logger.info(f"저장됨: {file_path}")
                     else:
                         self.logger.error(f"저장할 데이터 없음: {file_path}")

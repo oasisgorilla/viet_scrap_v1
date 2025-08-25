@@ -16,10 +16,10 @@ class DirectiveUpdater:
     def run(self):
         self.scraper.driver.delete_all_cookies()
         # ---------- 수집된 행정지시문서 url 목록 로드 ----------
-        directive_info_merged_file = Path(self.scraper.output_dir)/"info"/"merged_result.xlsx"
+        directive_info_merged_file = Path(self.scraper.output_dir)/"info"/"merged_result.csv"
         directive_existing_urls = set([])
         if directive_info_merged_file.exists():
-            directive_df_existing = pd.read_excel(directive_info_merged_file)
+            directive_df_existing = pd.read_csv(directive_info_merged_file)
             directive_existing_urls = set(directive_df_existing["url"].dropna().unique())
         
         try:
@@ -69,12 +69,12 @@ class DirectiveUpdater:
             timestamp = datetime.now().strftime("%Y%m%d%H%M")
             output_dir = Path(self.scraper.output_dir)/"info"
             os.makedirs(output_dir, exist_ok=True)
-            file_name = f"updated_result_{timestamp}.xlsx"
+            file_name = f"updated_result_{timestamp}.csv"
             file_path = os.path.join(output_dir, file_name)
             if self.scraper.info_results:
                 df1 = pd.DataFrame(self.scraper.info_results)
 
-                df1.to_excel(file_path, index=False)
+                df1.to_csv(file_path, index=False, encoding='utf-8')
                 self.logger.error(f"수집 대상 {len(urls_to_collect)}건 중 {len(self.scraper.info_results)}건 수집 성공 ({len(self.scraper.info_results) / len(urls_to_collect) * 100:.1f}%)")
                 #엑셀 병합
                 self.logger.info("directive info 병합 시작")

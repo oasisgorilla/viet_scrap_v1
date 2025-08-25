@@ -17,13 +17,6 @@ def test_imports():
         from update import make_law_updater
         print("✅ 팩토리 함수 임포트 성공")
         
-        # 하위호환 래퍼
-        from scraper.central_law_scraper import CentralLawScraper
-        from scraper.local_law_scraper import LocalLawScraper
-        from update.central_law_updater import CentralLawUpdater
-        from update.local_law_updater import LocalLawUpdater
-        print("✅ 하위호환 래퍼 임포트 성공")
-        
         # 기존 지시문서
         from scraper.directive_scraper import DirectiveScraper
         from update.directive_updater import DirectiveUpdater
@@ -72,38 +65,6 @@ def test_factory_functions():
     
     return True
 
-def test_legacy_compatibility():
-    """하위호환성 테스트"""
-    print("\n=== 하위호환성 테스트 ===")
-    
-    try:
-        from scraper.central_law_scraper import CentralLawScraper
-        from scraper.local_law_scraper import LocalLawScraper
-        
-        # 기존 방식으로 생성
-        central_legacy = CentralLawScraper()
-        print(f"✅ 기존 중앙 스크래퍼: {central_legacy.output_dir}")
-        print(f"   내부 스크래퍼 모드: {central_legacy._scraper.mode}")
-        
-        local_legacy = LocalLawScraper()  
-        print(f"✅ 기존 지방 스크래퍼: {local_legacy.output_dir}")
-        print(f"   내부 스크래퍼 모드: {local_legacy._scraper.mode}")
-        
-        # 기본 메서드 존재 확인
-        assert hasattr(central_legacy, 'run')
-        assert hasattr(central_legacy, 'merge_excel')
-        assert hasattr(central_legacy, 'safe_extract_law_details')
-        print("✅ 기존 메서드들 정상 존재")
-        
-        # 드라이버 정리
-        central_legacy.driver.quit()
-        local_legacy.driver.quit()
-        
-    except Exception as e:
-        print(f"❌ 하위호환성 테스트 실패: {e}")
-        return False
-        
-    return True
 
 def test_merge_excel():
     """merge_excel 함수 테스트"""
@@ -138,17 +99,17 @@ def test_merge_excel():
                 '발급기관': ['기관2상세', '기관4', '-']
             })
             
-            df1.to_excel(test_dir / "test1.xlsx", index=False)
-            df2.to_excel(test_dir / "test2.xlsx", index=False)
+            df1.to_csv(test_dir / "test1.csv", index=False, encoding='utf-8')
+            df2.to_csv(test_dir / "test2.csv", index=False, encoding='utf-8')
             
             # merge_excel 실행
             scraper.merge_excel("info", ['itemID'])
             
             # 결과 확인
-            merged_path = test_dir / "merged_result.xlsx"
-            assert merged_path.exists(), "merged_result.xlsx 생성되지 않음"
+            merged_path = test_dir / "merged_result.csv"
+            assert merged_path.exists(), "merged_result.csv 생성되지 않음"
             
-            merged_df = pd.read_excel(merged_path)
+            merged_df = pd.read_csv(merged_path)
             print(f"✅ 병합 완료: {len(merged_df)}행")
             
             # 중복 제거 확인 (itemID='2'는 keep='last'로 df2 버전이 남아야 함)
@@ -213,7 +174,6 @@ def main():
     tests = [
         ("임포트", test_imports),
         ("팩토리 함수", test_factory_functions), 
-        ("하위호환성", test_legacy_compatibility),
         ("merge_excel", test_merge_excel),
         ("출력 디렉토리", test_output_directories),
         ("로그 파일", test_log_files)

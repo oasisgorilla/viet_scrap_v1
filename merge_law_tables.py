@@ -22,7 +22,7 @@ def ensure_dir(p: Path) -> Path:
 def read_if_exists(path: Path) -> pd.DataFrame:
     try:
         if path.exists() and path.stat().st_size > 0:
-            df = pd.read_excel(path)
+            df = pd.read_csv(path)
             LOGGER.info(f"[read] {path} rows={len(df)}")
             return df
     except Exception as e:
@@ -64,12 +64,12 @@ def normalize_types(df: pd.DataFrame, to_str_cols: Iterable[str]) -> pd.DataFram
 # -------- 메인 병합 로직 --------
 def merge_info() -> Optional[Path]:
     """
-    중앙/지방 '기본정보' 통합 → 베트남_법령_기본정보.xlsx
+    중앙/지방 '기본정보' 통합 → 베트남_법령_기본정보.csv
     중복 키: regionID + itemID
     """
     srcs = [
-        Path("output/central_law/info/merged_result.xlsx"),
-        Path("output/local_law/info/merged_result.xlsx"),
+        Path("output/central_law/info/merged_result.csv"),
+        Path("output/local_law/info/merged_result.csv"),
     ]
     dfs = [read_if_exists(p) for p in srcs]
     df = concat_and_drop_duplicates(dfs, subset=["regionID", "itemID"])
@@ -81,19 +81,19 @@ def merge_info() -> Optional[Path]:
     df = normalize_types(df, ["regionID", "itemID"])
 
     out_dir = ensure_dir(OUT_BASE / "info")
-    out_path = out_dir / "베트남_법령_기본정보.xlsx"
-    df.to_excel(out_path, index=False)
+    out_path = out_dir / "베트남_법령_기본정보.csv"
+    df.to_csv(out_path, index=False, encoding='utf-8')
     LOGGER.info(f"[info] 저장: {out_path} rows={len(df)}")
     return out_path
 
 def merge_relation() -> Optional[Path]:
     """
-    중앙/지방 '관계정보' 통합 → 베트남_법령_관계정보.xlsx
+    중앙/지방 '관계정보' 통합 → 베트남_법령_관계정보.csv
     중복 제거 없이 단순 병합
     """
     srcs = [
-        Path("output/central_law/relation/merged_result.xlsx"),
-        Path("output/local_law/relation/merged_result.xlsx"),
+        Path("output/central_law/relation/merged_result.csv"),
+        Path("output/local_law/relation/merged_result.csv"),
     ]
     dfs = [read_if_exists(p) for p in srcs]
     df = pd.concat([d for d in dfs if not d.empty], ignore_index=True) # 중복체크 하지 않음
@@ -108,19 +108,19 @@ def merge_relation() -> Optional[Path]:
     df = reassign_pk(df, "id")
 
     out_dir = ensure_dir(OUT_BASE / "relation")
-    out_path = out_dir / "베트남_법령_관계정보.xlsx"
-    df.to_excel(out_path, index=False)
+    out_path = out_dir / "베트남_법령_관계정보.csv"
+    df.to_csv(out_path, index=False, encoding='utf-8')
     LOGGER.info(f"[relation] 저장: {out_path} rows={len(df)}")
     return out_path
 
 def merge_download_link() -> Optional[Path]:
     """
-    중앙/지방 '다운로드링크' 통합 → 베트남_법령_파일링크.xlsx
+    중앙/지방 '다운로드링크' 통합 → 베트남_법령_파일링크.csv
     중복 키: regionID, itemID, 다운로드 링크
     """
     srcs = [
-        Path("output/central_law/download_link/merged_result.xlsx"),
-        Path("output/local_law/download_link/merged_result.xlsx"),
+        Path("output/central_law/download_link/merged_result.csv"),
+        Path("output/local_law/download_link/merged_result.csv"),
     ]
     dfs = [read_if_exists(p) for p in srcs]
 
@@ -137,8 +137,8 @@ def merge_download_link() -> Optional[Path]:
     df = reassign_pk(df, "id")
 
     out_dir = ensure_dir(OUT_BASE / "download_link")
-    out_path = out_dir / "베트남_법령_파일링크.xlsx"
-    df.to_excel(out_path, index=False)
+    out_path = out_dir / "베트남_법령_파일링크.csv"
+    df.to_csv(out_path, index=False, encoding='utf-8')
     LOGGER.info(f"[download_link] 저장: {out_path} rows={len(df)}")
     return out_path
 
@@ -146,14 +146,14 @@ def copy_directive() -> Optional[Path]:
     """
     행정지시문서 기본정보를 이름만 바꿔 최종 위치로 복사 저장
     """
-    src = Path("output/directive/info/merged_result.xlsx")
+    src = Path("output/directive/info/merged_result.csv")
     df = read_if_exists(src)
     if df.empty:
         LOGGER.warning("[directive] 입력 데이터가 비었습니다.")
         return None
     out_dir = ensure_dir(OUT_BASE / "directive")
-    out_path = out_dir / "베트남_중앙정부_행정_지시_문서_기본정보.xlsx"
-    df.to_excel(out_path, index=False)
+    out_path = out_dir / "베트남_중앙정부_행정_지시_문서_기본정보.csv"
+    df.to_csv(out_path, index=False, encoding='utf-8')
     LOGGER.info(f"[directive] 저장: {out_path} rows={len(df)}")
     return out_path
 

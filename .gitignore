@@ -2,7 +2,7 @@
 venv/
 
 # 결과 파일
-*.xlsx
+*.csv
 
 # 로그 파일
 *log.txt
